@@ -18,7 +18,7 @@ import Hud from '@/components/hud';
 import * as TaskManager from 'expo-task-manager';
 import AppConfig from '@/config/AppConfig';
 import * as Api from '@/services/Api';
-import store from '@/mst/index';
+import {processLocationUpdate} from "@/utils/location";
 
 if (Platform.OS === 'android') {
   if (UIManager.setLayoutAnimationEnabledExperimental) {
@@ -33,18 +33,7 @@ TaskManager.defineTask(AppConfig.locationTaskName, async ({data, error}) => {
   }
   if (data) {
     const {locations} = data;
-    console.log(data);
-    const {latitude, longitude} = locations[0].coords;
-
-    // Just send location and wait for no response
-    if (store.user.phoneNumber.length > 0 && store.user.deviceId.length > 0) {
-      try {
-        console.log(latitude, longitude, store.user.phoneNumber, store.user.deviceId);
-        await Api.sendLocation(store.user.deviceId, latitude, longitude);
-      } catch (exception) {
-        console.log('Exception occurred while updating user location');
-      }
-    }
+    await processLocationUpdate(locations);
   }
 });
 

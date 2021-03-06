@@ -10,4 +10,7 @@ export default {
   manualJoin: true,
   locationTaskName: 'driver-location-task',
   locationUpdateInterval: 1000, // For Android only Just 5 minutes
+
+  dbName: 'offline-locations.db',
+  dbVersion: '1.0',
 };

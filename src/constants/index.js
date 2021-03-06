@@ -9,4 +9,6 @@ export const ConfirmAlertResult = {
   Dismiss: 'Dismiss',
 };
 
+export const UserPrefStorageKey = 'auth';
+
 export const AppName = appName;

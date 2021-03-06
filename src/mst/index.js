@@ -4,6 +4,7 @@ import {onSnapshot} from 'mobx-state-tree';
 import Store from './Store';
 import {toJS} from 'mobx';
 import NetInfo from "@react-native-community/netinfo";
+import {UserPrefStorageKey} from "@/constants";
 
 const store = Store.create({
   user: {},
@@ -12,13 +13,11 @@ const store = Store.create({
   net: {}
 });
 
-const storageKey = 'auth';
-
 // Initialize from store, just return the promise.
 store.initialize = async function () {
   try {
     // Load data from local storage
-    const snapshot = await Storage.getObject(storageKey);
+    const snapshot = await Storage.getObject(UserPrefStorageKey);
     store.user.load(snapshot);
   }catch(ex){
     console.log('store::initialize - failed to load snapshot from stored user information', ex);
@@ -40,7 +39,7 @@ export function scheduleWrite2Storage() {
         'scheduleWrite2Storage(): Saving user data to local storage',
         snap,
       );
-      Storage.putObject(storageKey, snap);
+      Storage.putObject(UserPrefStorageKey, snap);
     } catch (ex) {
       console.log('scheduleWrite2Storage(): ', ex);
     }

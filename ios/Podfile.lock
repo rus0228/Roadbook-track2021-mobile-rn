@@ -26,6 +26,9 @@ PODS:
   - EXPermissions (9.0.1):
     - UMCore
     - UMPermissionsInterface
+  - EXSQLite (9.0.0):
+    - UMCore
+    - UMFileSystemInterface
   - EXTaskManager (8.5.0):
     - UMAppLoader
     - UMConstantsInterface
@@ -401,6 +404,7 @@ DEPENDENCIES:
   - EXImageLoader (from `../node_modules/expo-image-loader/ios`)
   - EXLocation (from `../node_modules/expo-location/ios`)
   - EXPermissions (from `../node_modules/expo-permissions/ios`)
+  - EXSQLite (from `../node_modules/expo-sqlite/ios`)
   - EXTaskManager (from `../node_modules/expo-task-manager/ios`)
   - FBLazyVector (from `../node_modules/react-native/Libraries/FBLazyVector`)
   - FBReactNativeSpec (from `../node_modules/react-native/Libraries/FBReactNativeSpec`)
@@ -510,6 +514,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/expo-location/ios"
   EXPermissions:
     :path: "../node_modules/expo-permissions/ios"
+  EXSQLite:
+    :path: "../node_modules/expo-sqlite/ios"
   EXTaskManager:
     :path: "../node_modules/expo-task-manager/ios"
   FBLazyVector:
@@ -632,6 +638,7 @@ SPEC CHECKSUMS:
   EXImageLoader: 02ca02c9cd5cc8a97b423207a73a791e0a86bea5
   EXLocation: 90232c6f2773b04a3c146bfda9f181035722c10a
   EXPermissions: 80ac3acbdb145930079810fe5b08c022b3428aa8
+  EXSQLite: 379304a143cb33855a61ef66844c75af9ef67a58
   EXTaskManager: 85c9d0ad555af2a393a5c4cb34c767f0e2162357
   FBLazyVector: 6f1045c66f816849b33c4ff28930b611e89059a0
   FBReactNativeSpec: e856d5103d749483f86f53afafd8df4ed8a776bd
@@ -699,6 +706,6 @@ SPEC CHECKSUMS:
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
   ZXingObjC: fdbb269f25dd2032da343e06f10224d62f537bdb
 
-PODFILE CHECKSUM: 98d633763f35fcdac4915fa38823c89f85d7d4b7
+PODFILE CHECKSUM: 3ddccccf5842930fcba974a5fb16301961ce87d9
 
-COCOAPODS: 1.10.1
+COCOAPODS: 1.10.0

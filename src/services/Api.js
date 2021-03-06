@@ -1,48 +1,26 @@
 // a library to wrap and simplify api calls
-import Api from '@/constants/Api';
 import Config from '@/config/AppConfig';
-import numeral from 'numeral';
-import base64 from 'react-native-base64';
-import qs from 'qs';
+import axios, {AxiosInstance} from 'axios';
+import Apis from '@/constants/Api';
 
-const commonHeaders = {
-  'Cache-Control': 'no-cache',
-  'Content-Type': 'application/x-www-form-urlencoded',
-};
-// export const logIn = (username, password) => {
-//   return fetch(Config.apiEndPoint + Api.logIn, {
-//     method: 'POST',
-//     headers: commonHeaders,
-//     body: qs.stringify({username, password}),
-//   }).then((resp) => resp.json());
-// };
+const instance: AxiosInstance = axios.create({
+  baseURL: Config.apiEndPoint,
+  headers: { 'content-type': 'application/json' },
+  timeout: 20000    // Timeout 20 seconds
+});
 
-export const logIn = (username, password) => {
-  const url = Config.apiEndPoint + Api.logIn + '?' + qs.stringify({username, password});
-  console.log(url);
-  return fetch(url).then((resp) => resp.json());
-};
 
-// export const sendLocation = (userid, latitude, longitude) => {
-//   // Build token and base64 encode
-//   const str =
-//     userid +
-//     ',' +
-//     numeral(latitude).format('0.000000') +
-//     ',' +
-//     numeral(longitude).format('0.000000');
-//   const token = base64.encode(str);
-//   return fetch(Config.apiEndPoint + Api.sendLocation, {
-//     method: 'POST',
-//     headers: commonHeaders,
-//     body: qs.stringify({token}),
-//   }).then(() => {});
-// };
 
-export const sendLocation = (userid, latitude, longitude) => {
-  // Build token and base64 encode
-  const str = userid + ',' + numeral(latitude).format('0.000000') + ',' + numeral(longitude).format('0.000000');
-  const token = base64.encode(str);
-  const url = Config.apiEndPoint + Api.sendLocation + '?' + qs.stringify({token});
-  return fetch(url).then(() => {});
-};
+/*
+  By default Axios wraps the response into following format
+  interface AxiosResponse<T = any>  {
+    data: T;
+    status: number;
+    statusText: string;
+    headers: any;
+    config: AxiosRequestConfig;
+    request?: any;
+  }
+ */
+
+export const sendLocations = (locations) => instance.post(Apis.sendLocations, locations).then();
