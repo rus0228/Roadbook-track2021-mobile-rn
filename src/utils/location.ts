@@ -70,6 +70,16 @@ const processLocationUpdate = (function() : (data: LocationObject[]) => void {
     }
 
     /**
+     * Send location to server
+     * @param locations
+     */
+    function sendLocation(locations: LocationObject[]) {
+        // Just call the api
+        console.log(locations);
+        return api.sendLocations(locations);
+    }
+
+    /**
      * Read Device Info
      */
     async function readDeviceInfo(): Promise<{phoneNumber: string; deviceId: string;}> {
@@ -89,15 +99,6 @@ const processLocationUpdate = (function() : (data: LocationObject[]) => void {
     }
 
     /**
-     * Send location to server
-     * @param locations
-     */
-    function sendLocation(locations: LocationObject[]) {
-        // Just call the api
-        return api.sendLocations(locations);
-    }
-
-    /**
      * Read all offline locations from db and send to api server.
      */
     async function syncOfflineLocations(){
@@ -113,6 +114,7 @@ const processLocationUpdate = (function() : (data: LocationObject[]) => void {
         let timestamp = undefined;
         while (1) {
             try {
+                // @ts-ignore
                 const rows = await readLocations(count, timestamp);
                 // If no more records, just stop reading
                 if (!rows.length) {
@@ -122,6 +124,7 @@ const processLocationUpdate = (function() : (data: LocationObject[]) => void {
 
                 // After successful send, just delete all the locations before this timestamp
                 // The timestamp of last row should be largest, as it reads in ascending order
+                // @ts-ignore
                 const newest = rows[rows.length - 1];
                 timestamp = newest.timestamp;
 

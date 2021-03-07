@@ -17,7 +17,6 @@ import {ActionSheetProvider} from '@expo/react-native-action-sheet';
 import Hud from '@/components/hud';
 import * as TaskManager from 'expo-task-manager';
 import AppConfig from '@/config/AppConfig';
-import * as Api from '@/services/Api';
 import {processLocationUpdate} from "@/utils/location";
 
 if (Platform.OS === 'android') {
@@ -33,6 +32,18 @@ TaskManager.defineTask(AppConfig.locationTaskName, async ({data, error}) => {
   }
   if (data) {
     const {locations} = data;
+    /*{
+      "coords": {
+        "altitude": locations.coords.altitude,
+        "altitudeAccuracy": locations.coords.altitudeAccuracy,
+        "latitude": locations.coords.latitude,
+        "accuracy": locations.coords.accuracy,
+        "longitude": locations.coords.longitude,
+        "heading": locations.coords.heading,
+        "speed": locations.coords.speed
+      },
+      "timestamp": locations.coords.timestamp
+    }*/
     await processLocationUpdate(locations);
   }
 });
