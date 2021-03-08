@@ -3,12 +3,13 @@ import Config from '@/config/AppConfig';
 import {LocationObject} from "expo-location";
 
 const db = SQLite.openDatabase(Config.dbName, Config.dbVersion);
+const createTableSQL = 'create table if not exists locations(id integer primary key autoincrement, latitude double, longitude double, speed double, accuracy double, altitude double, timestamp integer)';
 
-const createTableSQL = 'CREATE TABLE IF NOT EXISTS locations (id INTEGER PRIMARY KEY AUTOINCREMENT, latitude REAL, longitude REAL, speed REAL, accuracy REAL, altitude REAL, timestamp INTEGER)';
-
-// Create table if does not exists
-db.exec([{sql: createTableSQL, args: []}], true, () => {
-    console.log('Successfully initialized database');
+/**
+ * Create locations table if not exists
+ */
+db.transaction(function (tx) {
+    tx.executeSql(createTableSQL);
 });
 
 /**
@@ -16,17 +17,31 @@ db.exec([{sql: createTableSQL, args: []}], true, () => {
  * @param location
  */
 export function saveLocation(location:LocationObject): Promise<void> {
+
+    console.log(location);
+
     return new Promise<void>((resolve, reject) => {
         const sql = 'INSERT INTO locations (latitude, longitude, speed, accuracy, altitude, timestamp) VALUES (?, ?, ?, ?, ?, ?)';
         const {latitude, longitude, altitude, accuracy, speed} = location.coords;
         const args = [latitude, longitude, speed, accuracy, altitude, location.timestamp];
-        db.exec([{sql, args}], true, (error) => {
-            if (error) {
+        // db.exec([{sql, args}], true, (error) => {
+        //     if (error) {
+        //         reject(error);
+        //         return;
+        //     }
+        //     resolve();
+        // });
+
+        db.transaction(function (tx) {
+            tx.executeSql(sql, args, (transaction, resultSet) => {
+                console.log(transaction, resultSet);
+                resolve();
+            }, (transaction, error) => {
+                console.log(error);
                 reject(error);
-                return;
-            }
-            resolve();
-        });
+                return false;
+            })
+        })
     });
 }
 

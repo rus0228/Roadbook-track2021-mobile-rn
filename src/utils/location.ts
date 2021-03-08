@@ -10,8 +10,8 @@ import * as api from '@/services/Api';
 const processLocationUpdate = (function() : (data: LocationObject[]) => void {
 
     // Configuration
-    const speedLimit = 1;   // track when speed is > 1
-    const distanceLimit = 5;    // Distance Limit > 5m
+    const speedLimit = 0;   // track when speed is > 1
+    const distanceLimit = 0;    // Distance Limit > 5m
 
     /**
      * Remember the last location object tracked
@@ -75,7 +75,6 @@ const processLocationUpdate = (function() : (data: LocationObject[]) => void {
      */
     function sendLocation(locations: LocationObject[]) {
         // Just call the api
-        console.log(locations);
         return api.sendLocations(locations);
     }
 
@@ -187,14 +186,15 @@ const processLocationUpdate = (function() : (data: LocationObject[]) => void {
 
         // Send the updates to the api
         try {
-            await sendLocation([currentLocation]);
 
+            await sendLocation([currentLocation]);
             // When location is successfully sent, try to synchronize offline locations
             await syncOfflineLocations();
         }catch(ex){
             console.log('processLocationUpdate - send location failed, saving to local storage', ex);
             //if send location failed. store into sqlite db
             try {
+                console.log('--------------------');
                 await saveLocation(currentLocation);
             }catch(ex){
                 console.log('processLocationUpdate - save location failed', ex);

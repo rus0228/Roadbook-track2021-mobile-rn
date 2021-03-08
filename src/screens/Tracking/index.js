@@ -90,8 +90,4 @@ const CenterArea = styled.View`
   align-items: center;
 `;
 
-const BottomArea = styled.View`
-  margin-bottom: ${Sizes.scale(50)}px;
-`;
-
 export default observer(Tracking);

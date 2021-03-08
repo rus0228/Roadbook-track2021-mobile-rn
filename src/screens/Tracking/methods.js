@@ -21,6 +21,12 @@ function useViewModel(props) {
     React.useEffect(() => {
         isLocationTracking().then((isRegistered) => {
             setTracking(isRegistered);
+            if (user.deviceId.length > 0 || isTracking){
+                console.log('current device is ', user.deviceId);
+                setTrackButtonEnabled(true);
+            }else {
+                setTrackButtonEnabled(false);
+            }
         });
     },[]);
 
@@ -40,8 +46,7 @@ function useViewModel(props) {
             if (!_isTracking) {
                 try {
                     await Location.startLocationUpdatesAsync(AppConfig.locationTaskName, {
-                        accuracy: Location.Accuracy.Balanced,
-                        timeInterval: AppConfig.locationUpdateInterval,
+                        accuracy: Location.Accuracy.BestForNavigation
                     });
                 } catch (ex) {
                     console.log('Exception - failed to start', ex);
