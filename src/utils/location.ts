@@ -10,8 +10,8 @@ import * as api from '@/services/Api';
 const processLocationUpdate = (function() : (data: LocationObject[]) => void {
 
     // Configuration
-    const speedLimit = 0;   // track when speed is > 1
-    const distanceLimit = 0;    // Distance Limit > 5m
+    const speedLimit = 1;   // track when speed is > 1
+    const distanceLimit = 5;    // Distance Limit > 5m
 
     /**
      * Remember the last location object tracked

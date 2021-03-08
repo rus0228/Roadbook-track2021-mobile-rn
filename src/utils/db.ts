@@ -21,9 +21,10 @@ export function saveLocation(location:LocationObject): Promise<void> {
     console.log(location);
 
     return new Promise<void>((resolve, reject) => {
-        const sql = 'INSERT INTO locations (latitude, longitude, speed, accuracy, altitude, timestamp) VALUES (?, ?, ?, ?, ?, ?)';
+        const sql = 'insert into locations (latitude, longitude, speed, accuracy, altitude, timestamp) values (?, ?, ?, ?, ?, ?)';
         const {latitude, longitude, altitude, accuracy, speed} = location.coords;
         const args = [latitude, longitude, speed, accuracy, altitude, location.timestamp];
+
         // db.exec([{sql, args}], true, (error) => {
         //     if (error) {
         //         reject(error);
@@ -54,34 +55,63 @@ export function saveLocation(location:LocationObject): Promise<void> {
  */
 export function readLocations(count: number, timestamp?: number): Promise<LocationObject[]> {
     return new Promise<LocationObject[]>((resolve, reject) => {
-        let sql = 'SELECT * FROM locations ';
+        let sql = 'select * from locations ';
         let args:unknown[] = [];
         if ((timestamp || 0) > 0) {
-            sql = sql + ' WHERE timestamp > ? ';
+            sql = sql + ' where timestamp > ? ';
             args = [timestamp];
         }
-        sql += ' ORDER BY timestamp ASC';
-        db.exec([{sql, args}], false, (error, resultSets) => {
-            if (error) {
-                reject(error);
-                return;
-            }
-            if (resultSets && resultSets.length) {
-                const resultSet = resultSets[0];
-                if (resultSet.error) {
-                    reject(resultSet.error);
-                    return;
+        sql = sql + ' order by timestamp asc limit ' + count;
+
+        db.transaction(function (tx) {
+            tx.executeSql(sql, args, (transaction, resultSet) => {
+
+                // @ts-ignore
+                let result: object[] = [];
+                for(let i = 0; i < resultSet.rows.length; i++) {
+                    let row = resultSet.rows.item(i);
+                    result[i] = {
+                        coords: {
+                            altitude: row['altitude'],
+                            latitude: row['latitude'],
+                            accuracy: row['accuracy'],
+                            longitude: row['longitude'],
+                            speed: row['speed']
+                        },
+                        timestamp: row['timestamp']
+                    }
                 }
-                const rows = resultSet.rows || [];
-                const result = rows.map((r: any) => ({
-                    coords: {...r},
-                    timestamp: r.timestamp
-                }));
+
+                // @ts-ignore
                 resolve(result);
-            } else {
-                resolve([]);
-            }
+
+            }, (transaction, error) => {
+                console.log(error);
+                reject(error);
+                return false;
+            })
         });
+        // db.exec([{sql, args}], false, (error, resultSets) => {
+        //     if (error) {
+        //         reject(error);
+        //         return;
+        //     }
+        //     if (resultSets && resultSets.length) {
+        //         const resultSet = resultSets[0];
+        //         if (resultSet.error) {
+        //             reject(resultSet.error);
+        //             return;
+        //         }
+        //         const rows = resultSet.rows || [];
+        //         const result = rows.map((r: any) => ({
+        //             coords: {...r},
+        //             timestamp: r.timestamp
+        //         }));
+        //         resolve(result);
+        //     } else {
+        //         resolve([]);
+        //     }
+        // });
     });
 }
 
@@ -94,19 +124,30 @@ export function deleteLocations(timestamp: number): Promise<void> {
     return new Promise<void>((resolve, reject) => {
         const sql = 'DELETE FROM locations WHERE timestamp <= ?';
         const args:unknown[] = [timestamp];
-        db.exec([{sql, args}], false, (error, resultSets) => {
-            if (error) {
-                reject(error);
-                return;
-            }
-            if (resultSets && resultSets.length) {
-                const resultSet = resultSets[0];
-                if (resultSet.error) {
-                    reject(resultSet.error);
-                    return;
-                }
+
+        db.transaction(function (tx) {
+            tx.executeSql(sql, args, (transaction, resultSet) => {
                 resolve();
-            }
+            }, (transaction, error) => {
+                console.log(error);
+                reject(error);
+                return false;
+            })
         });
+
+        // db.exec([{sql, args}], false, (error, resultSets) => {
+        //     if (error) {
+        //         reject(error);
+        //         return;
+        //     }
+        //     if (resultSets && resultSets.length) {
+        //         const resultSet = resultSets[0];
+        //         if (resultSet.error) {
+        //             reject(resultSet.error);
+        //             return;
+        //         }
+        //         resolve();
+        //     }
+        // });
     });
 }
