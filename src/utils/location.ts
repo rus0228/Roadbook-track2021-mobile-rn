@@ -8,7 +8,6 @@ import * as api from '@/services/Api';
 
 
 const processLocationUpdate = (function() : (data: LocationObject[]) => void {
-
     // Configuration
     const speedLimit = 1;   // track when speed is > 1
     const distanceLimit = 5;    // Distance Limit > 5m
@@ -73,9 +72,11 @@ const processLocationUpdate = (function() : (data: LocationObject[]) => void {
      * Send location to server
      * @param locations
      */
-    function sendLocation(locations: LocationObject[]) {
+    async function sendLocation(locations: LocationObject[]) {
         // Just call the api
-        return api.sendLocations(locations);
+        const deviceData = await readDeviceInfo();
+        const data = {locations, deviceData};
+        return api.sendLocations([data]);
     }
 
     /**
@@ -85,12 +86,12 @@ const processLocationUpdate = (function() : (data: LocationObject[]) => void {
         if (store.isInitialized) {
             const phoneNumber = store.user.phoneNumber;
             const deviceId = store.user.deviceId;
-            return {phoneNumber, deviceId};
+            return {phoneNumber: phoneNumber, deviceId: deviceId};
         }
         try {
             // In other case, (When the store is not properly initialized) just read from local storage
             const {phoneNumber, deviceId} = await Storage.getObject<any>(UserPrefStorageKey);
-            return {phoneNumber, deviceId};
+            return {phoneNumber: phoneNumber, deviceId: deviceId};
         }catch(ex){
             console.log('processLocationUpdate - Error while reading preference', ex);
         }
@@ -153,8 +154,8 @@ const processLocationUpdate = (function() : (data: LocationObject[]) => void {
      */
     return async function (data: LocationObject[]) {
         // Check if device information is stored, if not, then no need to track
-        const {phoneNumber, deviceId} = await readDeviceInfo();
-        if (!phoneNumber || !deviceId) {
+        const device = await readDeviceInfo();
+        if (!device.phoneNumber || !device.deviceId) {
             console.log('processLocationUpdate - Device information does not exist');
             return;
         }
@@ -186,7 +187,9 @@ const processLocationUpdate = (function() : (data: LocationObject[]) => void {
 
         // Send the updates to the api
         try {
-
+            //save gps info in user store
+            store.info.getGpsInfo(data[0].coords.latitude, data[0].coords.longitude, data[0].coords.accuracy,  data[0].coords.speed, data[0].timestamp);
+            //send current location to the server
             await sendLocation([currentLocation]);
             // When location is successfully sent, try to synchronize offline locations
             await syncOfflineLocations();
@@ -194,7 +197,6 @@ const processLocationUpdate = (function() : (data: LocationObject[]) => void {
             console.log('processLocationUpdate - send location failed, saving to local storage', ex);
             //if send location failed. store into sqlite db
             try {
-                console.log('--------------------');
                 await saveLocation(currentLocation);
             }catch(ex){
                 console.log('processLocationUpdate - save location failed', ex);

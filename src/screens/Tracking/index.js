@@ -45,15 +45,16 @@ const Tracking = (props) => {
                 <Description>
                     {!vm.isTracking ? (
                         <>
-                            Click <Text style={{fontWeight: 'bold'}}>Start</Text>{' '}
-                            Button to start tracking your real-time location.
+
                         </>
                     ) : (
-                        <>
-                            Your location is being updated.
-                            Click <Text style={{fontWeight: 'bold'}}>Stop</Text> Button
-                            to stop tracking your real-time location.
-                        </>
+                        <Text style={vm.isOnline ? {color: 'green'} : {color: 'red'}}>
+                            Latitude: {vm.latitude}{'\n'}
+                            Longitude: {vm.longitude}{'\n'}
+                            Accuracy: {vm.accuracy}{'\n'}
+                            Speed: {vm.speed}{'\n'}
+                            Timestamp: {vm.timestamp}
+                        </Text>
                     )}
                 </Description>
             </CenterArea>
@@ -69,9 +70,10 @@ const Screen = styled(Container)`
 `;
 
 const Description = styled(Roboto)`
-  color: black;
   font-size: ${Sizes.scale(20)}px;
-  text-align: center;
+  text-align: left;
+  border-radius: 20px;
+  padding: 20px;
 `;
 
 const TopArea = styled.View`
@@ -87,7 +89,6 @@ const StatusArea = styled(Text)`
 const CenterArea = styled.View`
   flex: 1;
   justify-content: center;
-  align-items: center;
 `;
 
 export default observer(Tracking);

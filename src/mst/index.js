@@ -10,7 +10,8 @@ const store = Store.create({
   user: {},
   notification: {},
   hud: {},
-  net: {}
+  net: {},
+  info: {}
 });
 
 // Initialize from store, just return the promise.

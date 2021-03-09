@@ -22,7 +22,6 @@ function useViewModel(props) {
         isLocationTracking().then((isRegistered) => {
             setTracking(isRegistered);
             if (user.deviceId.length > 0 || isTracking){
-                console.log('current device is ', user.deviceId);
                 setTrackButtonEnabled(true);
             }else {
                 setTrackButtonEnabled(false);
@@ -97,7 +96,6 @@ function useViewModel(props) {
 
     return {
         onPressToggleTracking: onPressToggleTracking,
-        username: user.username,
         isTracking,
         isOnline: net.isConnected,
         connectionType: net.connectionType,
@@ -106,7 +104,13 @@ function useViewModel(props) {
         isVisible,
         saveSetting,
         openSetting,
-        closeSetting
+        closeSetting,
+        //gps info
+        latitude: info.latitude,
+        longitude: info.longitude,
+        accuracy: info.accuracy,
+        speed: info.speed,
+        timestamp: info.timestamp
     };
 }
 
