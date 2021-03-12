@@ -1,9 +1,23 @@
 import * as SQLite from 'expo-sqlite';
 import Config from '@/config/AppConfig';
-import {LocationObject} from "expo-location";
+import {LocationObject} from 'expo-location';
 
+export type CustomLocationObject = {
+    coords: {
+        latitude: number;
+        longitude: number;
+        altitude: number | null;
+        accuracy: number | null;
+        altitudeAccuracy: number | null;
+        heading: number | null;
+        speed: number | null;
+    };
+    timestamp: number;
+    network?: boolean;
+};
 const db = SQLite.openDatabase(Config.dbName, Config.dbVersion);
-const createTableSQL = 'create table if not exists locations(id integer primary key autoincrement, latitude double, longitude double, speed double, accuracy double, altitude double, timestamp integer)';
+const createTableSQL = 'create table if not exists locations(id integer ' +
+    'primary key autoincrement, latitude double, longitude double, speed double, accuracy double, altitude double, timestamp double, network text)';
 
 /**
  * Create locations table if not exists
@@ -17,13 +31,10 @@ db.transaction(function (tx) {
  * @param location
  */
 export function saveLocation(location:LocationObject): Promise<void> {
-
-    console.log(location);
-
     return new Promise<void>((resolve, reject) => {
-        const sql = 'insert into locations (latitude, longitude, speed, accuracy, altitude, timestamp) values (?, ?, ?, ?, ?, ?)';
+        const sql = 'insert into locations (latitude, longitude, speed, accuracy, altitude, timestamp, network) values (?, ?, ?, ?, ?, ?, ?)';
         const {latitude, longitude, altitude, accuracy, speed} = location.coords;
-        const args = [latitude, longitude, speed, accuracy, altitude, location.timestamp];
+        const args = [latitude, longitude, speed, accuracy, altitude, location.timestamp, 'offline'];
 
         // db.exec([{sql, args}], true, (error) => {
         //     if (error) {
@@ -40,7 +51,7 @@ export function saveLocation(location:LocationObject): Promise<void> {
             }, (transaction, error) => {
                 console.log(error);
                 reject(error);
-                return false;
+                return true;
             })
         })
     });
@@ -53,8 +64,8 @@ export function saveLocation(location:LocationObject): Promise<void> {
  * @param count
  * @param timestamp
  */
-export function readLocations(count: number, timestamp?: number): Promise<LocationObject[]> {
-    return new Promise<LocationObject[]>((resolve, reject) => {
+export function readLocations(count: number, timestamp?: number): Promise<CustomLocationObject[]> {
+    return new Promise<CustomLocationObject[]>((resolve, reject) => {
         let sql = 'select * from locations ';
         let args:unknown[] = [];
         if ((timestamp || 0) > 0) {
@@ -78,7 +89,8 @@ export function readLocations(count: number, timestamp?: number): Promise<Locati
                             longitude: row['longitude'],
                             speed: row['speed']
                         },
-                        timestamp: row['timestamp']
+                        timestamp: row['timestamp'],
+                        network: row['network']
                     }
                 }
 
@@ -86,9 +98,8 @@ export function readLocations(count: number, timestamp?: number): Promise<Locati
                 resolve(result);
 
             }, (transaction, error) => {
-                console.log(error);
                 reject(error);
-                return false;
+                return true;
             })
         });
         // db.exec([{sql, args}], false, (error, resultSets) => {

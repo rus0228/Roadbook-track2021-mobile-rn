@@ -6,11 +6,12 @@ import Sizes from '@/styles/Sizes';
 import {Roboto, WhiteButtonText} from '@/components/Text';
 import FormInput from "@/components/Input/FormInput";
 import Button from "@/components/Button";
+import useViewModel from "../methods";
 
 const SettingModal = ({onSave, isVisible, onCancel}) => {
-    const [phoneNumber, setPhoneNumber] = React.useState('');
-    const [deviceId, setDeviceId] = React.useState('');
-
+    const vm = useViewModel();
+    const [phoneNumber, setPhoneNumber] = React.useState(vm.phoneNumber);
+    const [deviceId, setDeviceId] = React.useState(vm.deviceId);
     return (
         <Modal isVisible={isVisible}>
             <ContentView>

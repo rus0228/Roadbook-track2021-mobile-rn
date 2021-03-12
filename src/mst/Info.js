@@ -18,7 +18,7 @@ const Info = types
             self.timestamp = timestamp;
         }
 
-        return {    getGpsInfo};
+        return {getGpsInfo};
     });
 
 export default Info;

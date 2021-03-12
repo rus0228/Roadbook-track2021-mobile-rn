@@ -45,7 +45,8 @@ const Tracking = (props) => {
                 <Description>
                     {!vm.isTracking ? (
                         <>
-
+                            Click <Text style={{fontWeight: 'bold'}}>Start Tracking</Text>{' '}
+                            Button to start tracking your real-time location.
                         </>
                     ) : (
                         <Text style={vm.isOnline ? {color: 'green'} : {color: 'red'}}>

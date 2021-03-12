@@ -24,8 +24,6 @@ const instance: AxiosInstance = axios.create({
  */
 
 export const sendLocations = (locations) => {
-  instance.post(Apis.sendLocations, locations).then();
-  // instance.post(Apis.sendLocations, locations).then(response => {
-  //   console.log(response);
-  // });
+  return instance.post(Apis.sendLocations, locations).then(function (response) {
+  });
 }

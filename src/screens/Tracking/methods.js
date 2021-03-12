@@ -105,6 +105,8 @@ function useViewModel(props) {
         saveSetting,
         openSetting,
         closeSetting,
+        phoneNumber: user.phoneNumber,
+        deviceId: user.deviceId,
         //gps info
         latitude: info.latitude,
         longitude: info.longitude,
