@@ -19,6 +19,8 @@ PODS:
     - React-Core
     - UMCore
     - UMImageLoaderInterface
+  - EXKeepAwake (9.0.0):
+    - UMCore
   - EXLocation (9.0.1):
     - UMCore
     - UMPermissionsInterface
@@ -402,6 +404,7 @@ DEPENDENCIES:
   - EXConstants (from `../node_modules/expo-constants/ios`)
   - EXFileSystem (from `../node_modules/expo-file-system/ios`)
   - EXImageLoader (from `../node_modules/expo-image-loader/ios`)
+  - EXKeepAwake (from `../node_modules/expo-keep-awake/ios`)
   - EXLocation (from `../node_modules/expo-location/ios`)
   - EXPermissions (from `../node_modules/expo-permissions/ios`)
   - EXSQLite (from `../node_modules/expo-sqlite/ios`)
@@ -510,6 +513,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/expo-file-system/ios"
   EXImageLoader:
     :path: "../node_modules/expo-image-loader/ios"
+  EXKeepAwake:
+    :path: "../node_modules/expo-keep-awake/ios"
   EXLocation:
     :path: "../node_modules/expo-location/ios"
   EXPermissions:
@@ -636,6 +641,7 @@ SPEC CHECKSUMS:
   EXConstants: f907b3b6ce16e20d1750f22af1e095e924574bcb
   EXFileSystem: 76875135b61708b9afa7e6a89b72a60ba0fdfa20
   EXImageLoader: 02ca02c9cd5cc8a97b423207a73a791e0a86bea5
+  EXKeepAwake: 77180c8bdb7187c2bbd59170d2878d8b301b19e2
   EXLocation: 90232c6f2773b04a3c146bfda9f181035722c10a
   EXPermissions: 80ac3acbdb145930079810fe5b08c022b3428aa8
   EXSQLite: 379304a143cb33855a61ef66844c75af9ef67a58

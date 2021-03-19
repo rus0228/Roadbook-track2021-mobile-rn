@@ -9,7 +9,7 @@ export default {
   profileLinkPrefix: Config.SERVER_URL,
   manualJoin: true,
   locationTaskName: 'driver-location-task',
-  locationUpdateInterval: 1000, // For Android only Just 5 minutes
+  locationUpdateInterval: 5000,
   dbName: 'offline-locations.db',
   dbVersion: '1.0',
 };

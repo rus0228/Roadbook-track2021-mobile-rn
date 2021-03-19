@@ -5,6 +5,7 @@ import * as Location from 'expo-location';
 import AppConfig from '@/config/AppConfig';
 import {showAlert, confirmAlert} from '@/utils';
 import {ConfirmAlertResult} from '@/constants';
+import { activateKeepAwake, deactivateKeepAwake } from 'expo-keep-awake';
 
 const isLocationTracking = async () => {
     return TaskManager.isTaskRegisteredAsync(AppConfig.locationTaskName);
@@ -45,12 +46,21 @@ function useViewModel(props) {
             if (!_isTracking) {
                 try {
                     await Location.startLocationUpdatesAsync(AppConfig.locationTaskName, {
-                        accuracy: Location.Accuracy.BestForNavigation
+                        accuracy: Location.Accuracy.BestForNavigation,
+                        foregroundService: {
+                            notificationTitle: 'TRACK-2021',
+                            notificationBody: 'Your location is being used in background'
+                        }
+                        // timeInterval: {
+                        //     //
+                        // }
                     });
+                    activateKeepAwake();
                 } catch (ex) {
                     console.log('Exception - failed to start', ex);
                 }
             } else {
+                deactivateKeepAwake();
                 // Just stop location updates
                 try {
                     await Location.stopLocationUpdatesAsync(AppConfig.locationTaskName);

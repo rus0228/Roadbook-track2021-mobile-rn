@@ -5,7 +5,6 @@
  * @format
  * @flow strict-local
  */
-
 import React from 'react';
 import {Platform, StatusBar, UIManager} from 'react-native';
 import Route from '@/Route';
@@ -25,25 +24,13 @@ if (Platform.OS === 'android') {
   }
 }
 
-// Define background task to update the location
+// Define background task to update the location`
 TaskManager.defineTask(AppConfig.locationTaskName, async ({data, error}) => {
   if (error) {
     return;
   }
   if (data) {
     const {locations} = data;
-    /*{
-      "coords": {
-        "altitude": locations.coords.altitude,
-        "altitudeAccuracy": locations.coords.altitudeAccuracy,
-        "latitude": locations.coords.latitude,
-        "accuracy": locations.coords.accuracy,
-        "longitude": locations.coords.longitude,
-        "heading": locations.coords.heading,
-        "speed": locations.coords.speed
-      },
-      "timestamp": locations.coords.timestamp
-    }*/
     await processLocationUpdate(locations);
   }
 });

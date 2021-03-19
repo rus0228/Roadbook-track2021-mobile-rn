@@ -20,7 +20,7 @@ const Tracking = (props) => {
                     green
                     onPress={vm.openSetting}
                     fill>
-                    <WhiteButtonText>Settings</WhiteButtonText>
+                    <WhiteButtonText>Setting</WhiteButtonText>
                 </Button>
                 <Space height={Sizes.scale(10)}/>
                 <StatusArea>

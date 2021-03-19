@@ -23,6 +23,7 @@
     "apisauce": "^1.1.1",
     "axios": "^0.21.1",
     "expo-barcode-scanner": "^8.2.1",
+    "expo-keep-awake": "^9.0.0",
     "expo-location": "^9.0.1",
     "expo-sqlite": "^9.0.0",
     "expo-task-manager": "^8.5.0",
