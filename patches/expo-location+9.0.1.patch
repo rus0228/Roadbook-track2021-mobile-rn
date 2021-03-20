@@ -1,0 +1,12 @@
+diff --git a/node_modules/expo-location/android/src/main/AndroidManifest.xml b/node_modules/expo-location/android/src/main/AndroidManifest.xml
+index bacd0d9..cbda2ac 100644
+--- a/node_modules/expo-location/android/src/main/AndroidManifest.xml
++++ b/node_modules/expo-location/android/src/main/AndroidManifest.xml
+@@ -9,6 +9,7 @@
+   <application>
+     <service
+       android:name=".services.LocationTaskService"
++      android:foregroundServiceType="location"
+       android:exported="false" />
+   </application>
+ </manifest>
