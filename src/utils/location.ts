@@ -200,7 +200,14 @@ const processLocationUpdate = (function() : (data: CustomLocationObject[]) => vo
         // Send the updates to the api
         try {
             //save gps info in user store
-            store.info.getGpsInfo(data[0].coords.latitude, data[0].coords.longitude, data[0].coords.accuracy,  data[0].coords.speed, data[0].timestamp);
+            store.info.getGpsInfo(
+                data[0].coords.latitude,
+                data[0].coords.longitude,
+                data[0].coords.altitude,
+                data[0].coords.accuracy,
+                data[0].coords.speed,
+                data[0].timestamp
+            );
             //send current location to the server
             await sendLocation([currentLocation]);
             // When location is successfully sent, try to synchronize offline locations

@@ -5,16 +5,19 @@ import * as Location from 'expo-location';
 import AppConfig from '@/config/AppConfig';
 import {showAlert, confirmAlert} from '@/utils';
 import {ConfirmAlertResult} from '@/constants';
-import { activateKeepAwake, deactivateKeepAwake } from 'expo-keep-awake';
+import * as api from '@/services/Api';
 
 const isLocationTracking = async () => {
     return TaskManager.isTaskRegisteredAsync(AppConfig.locationTaskName);
 };
 
+const isValid = async (competitor) => {
+    return api.checkCompetitor(competitor)
+}
+
 function useViewModel(props) {
     const {user, hud, net, info} = useStores();
     const [isTracking, setTracking] = React.useState(false);
-    const [gpsSignal, setGpsSignal] = React.useState('Super');
     const [isVisible, setVisible] = React.useState(false);
     const [isTrackButtonEnabled, setTrackButtonEnabled] = React.useState(false);
 
@@ -24,11 +27,29 @@ function useViewModel(props) {
             setTracking(isRegistered);
             if (user.deviceId.length > 0 || isTracking){
                 setTrackButtonEnabled(true);
-            }else {
+            } else {
                 setTrackButtonEnabled(false);
             }
         });
+
+        isValid({deviceId: user.deviceId, phoneNumber: user.phoneNumber}).then((res) => {
+            if (res === 1){
+                setTrackButtonEnabled(true);
+            } else {
+                setTrackButtonEnabled(false);
+            }
+        })
     },[]);
+
+    // React.useLayoutEffect(() => {
+    //     isValid({deviceId: user.deviceId, phoneNumber: user.phoneNumber}).then((res) => {
+    //         if (res === 1){
+    //             setTrackButtonEnabled(true);
+    //         } else {
+    //             setTrackButtonEnabled(false);
+    //         }
+    //     })
+    // });
 
     // Delayed toggle tracking to disable fast click button.
     const onPressToggleTracking = useDelay(async () => {
@@ -51,16 +72,11 @@ function useViewModel(props) {
                             notificationTitle: 'TRACK-2021',
                             notificationBody: 'Your location is being used in background'
                         }
-                        // timeInterval: {
-                        //     //
-                        // }
                     });
-                    activateKeepAwake();
                 } catch (ex) {
                     console.log('Exception - failed to start', ex);
                 }
             } else {
-                deactivateKeepAwake();
                 // Just stop location updates
                 try {
                     await Location.stopLocationUpdatesAsync(AppConfig.locationTaskName);
@@ -70,9 +86,9 @@ function useViewModel(props) {
             }
             // Set tracking flag again.
             const _isTracking1 = await isLocationTracking();
-            console.log('Is now tracking ', _isTracking1);
-            console.log('Status is ', status);
+            console.log('Is now tracking ', _isTracking1, 'Status is ', status);
             setTracking(_isTracking1);
+
         } catch (exception) {
             console.log('Exception occurred ', exception);
         } finally {
@@ -89,18 +105,37 @@ function useViewModel(props) {
         setVisible(false);
     };
 
+    const saveResult = async (alertContent) => {
+        const saveResult = await confirmAlert(
+            `${alertContent}`,
+        );
+        if (saveResult !== ConfirmAlertResult.OK) {
+            return;
+        }
+    }
+
+
     const saveSetting = async (phoneNumber, deviceId) => {
-        if (phoneNumber.length > 0 && deviceId.length > 0){
-            setVisible(false);
-            setTrackButtonEnabled(true);
-            user.addInfo(phoneNumber, deviceId);
-        }else {
-            const saveResult = await confirmAlert(
-                `Phone number or device ID was not registered successfully. Please try again.`,
-            );
-            if (saveResult !== ConfirmAlertResult.OK) {
-                return;
+        const isBeingTracking = await isLocationTracking();
+        console.log('now location is been tracking?', isBeingTracking);
+
+        if (!isBeingTracking){
+            if (phoneNumber.length > 0 && deviceId.length > 0){
+                setVisible(false);
+                user.addInfo(phoneNumber, deviceId);
+                isValid({deviceId: deviceId, phoneNumber: phoneNumber}).then((res) => {
+                    if (res === 1){
+                        setTrackButtonEnabled(true);
+                    } else {
+                        setTrackButtonEnabled(false);
+                        saveResult('You are not a registered competitor.');
+                    }
+                })
+            }else {
+                saveResult('Phone number or device ID was not registered successfully. Please try again.');
             }
+        }else {
+            saveResult('During tracking, you can not update competitor info.');
         }
     };
 
@@ -109,7 +144,6 @@ function useViewModel(props) {
         isTracking,
         isOnline: net.isConnected,
         connectionType: net.connectionType,
-        gpsSignal,
         isTrackButtonEnabled,
         isVisible,
         saveSetting,
@@ -117,12 +151,14 @@ function useViewModel(props) {
         closeSetting,
         phoneNumber: user.phoneNumber,
         deviceId: user.deviceId,
-        //gps info
         latitude: info.latitude,
         longitude: info.longitude,
+        altitude: info.altitude,
         accuracy: info.accuracy,
+        decimalAccuracy: info.decimalAccuracy,
         speed: info.speed,
-        timestamp: info.timestamp
+        timestamp: info.timestamp,
+        formattedTime: info.formattedTime
     };
 }
 

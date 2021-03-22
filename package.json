@@ -8,7 +8,7 @@
     "start": "react-native start",
     "test": "jest",
     "lint": "eslint .",
-    "newclear": "rm -rf $TMPDIR/react-* && watchman watch-del-all && rm -rf ios/build && rm -rf node_modules/ && yarn cache clean --force && yarn",
+    "newclear": "rm -rf $TMPDIR/react-* && rm -rf ios/build && rm -rf node_modules/ && yarn cache clean --force && yarn",
     "postinstall": "patch-package"
   },
   "dependencies": {

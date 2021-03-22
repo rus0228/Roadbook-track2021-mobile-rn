@@ -13,3 +13,15 @@ export const sendLocations = (locations) => {
   return instance.post(Apis.sendLocations, locations).then(function (response) {
   });
 }
+
+export const checkCompetitor = (competitor) => {
+  // return instance.post(Apis.checkCompetitor, competitor).then(function (response) {});
+  return axios.post('http://167.172.153.254/sendLocations/checkCompetitor.php', competitor)
+      .then(function (response) {
+        return response.data;
+      })
+      .catch(function (error) {
+        console.log(error);
+        return false;
+      });
+}
