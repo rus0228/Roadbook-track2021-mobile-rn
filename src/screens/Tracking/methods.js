@@ -33,7 +33,7 @@ function useViewModel(props) {
         });
 
         isValid({deviceId: user.deviceId, phoneNumber: user.phoneNumber}).then((res) => {
-            if (res === 1){
+            if (res === 200){
                 setTrackButtonEnabled(true);
             } else {
                 setTrackButtonEnabled(false);
@@ -124,7 +124,7 @@ function useViewModel(props) {
                 setVisible(false);
                 user.addInfo(phoneNumber, deviceId);
                 isValid({deviceId: deviceId, phoneNumber: phoneNumber}).then((res) => {
-                    if (res === 1){
+                    if (res === 200){
                         setTrackButtonEnabled(true);
                     } else {
                         setTrackButtonEnabled(false);

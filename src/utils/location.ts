@@ -4,22 +4,9 @@ import {UserPrefStorageKey} from "@/constants";
 import {deleteLocations, readLocations, saveLocation} from "@/utils/db";
 import NetInfo from "@react-native-community/netinfo";
 import * as api from '@/services/Api';
+import {LocationObject} from "expo-location";
 
-export type CustomLocationObject = {
-    coords: {
-        latitude: number;
-        longitude: number;
-        altitude: number | null;
-        accuracy: number | null;
-        altitudeAccuracy: number | null;
-        heading: number | null;
-        speed: number | null;
-    };
-    timestamp: number;
-    network?: string;
-};
-
-const processLocationUpdate = (function() : (data: CustomLocationObject[]) => void {
+const processLocationUpdate = (function() : (data: LocationObject[]) => void {
     // Configuration
     const speedLimit = 1;   // track when speed is > 1
     const distanceLimit = 5;    // Distance Limit > 5m
@@ -27,7 +14,7 @@ const processLocationUpdate = (function() : (data: CustomLocationObject[]) => vo
     /**
      * Remember the last location object tracked
      */
-    let lastLocation: CustomLocationObject | undefined = undefined;
+    let lastLocation: LocationObject | undefined = undefined;
 
     let isInSyncProcess = false;
 
@@ -84,11 +71,11 @@ const processLocationUpdate = (function() : (data: CustomLocationObject[]) => vo
      * Send location to server
      * @param locations
      */
-    async function sendLocation(locations: CustomLocationObject[]) {
+    async function sendLocation(locations: LocationObject[]) {
         // Just call the api
         const deviceData = await readDeviceInfo();
-        const data = {locations, deviceData};
-        return api.sendLocations([data]);
+        const data = {deviceData, locations};
+        return api.sendLocations(data);
     }
 
     /**
@@ -164,7 +151,7 @@ const processLocationUpdate = (function() : (data: CustomLocationObject[]) => vo
      * @param data
      * @returns {Promise<void>}
      */
-    return async function (data: CustomLocationObject[]) {
+    return async function (data: LocationObject[]) {
         // Check if device information is stored, if not, then no need to track
         const device = await readDeviceInfo();
         if (!device.phoneNumber || !device.deviceId) {
